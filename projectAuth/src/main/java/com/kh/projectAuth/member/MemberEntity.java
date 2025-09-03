@@ -47,8 +47,6 @@ public class MemberEntity {
     @Column(nullable = false)
     private String companyToken;
 
-
-
     public MemberEntity() {
         delYn = "N";
         createdAt = LocalDateTime.now();
@@ -58,20 +56,19 @@ public class MemberEntity {
 
         MemberEntity entity = new MemberEntity();
 
-
         //Bcrpt 암호화를 위한 객체생성
         BCryptPasswordEncoder bc = new BCryptPasswordEncoder();
 
         entity.userId = dto.getUserId();
+
         //Bcrpt 클래스의 encode 메서드를 통해서 입력받은 dto 객체에서 비밀번호만 암호화 하면서
         //JPA 형식에 맞춘 Entity 타입으로 변환
         entity.userPwd = bc.encode(dto.getUserPwd());
         entity.userNick = dto.getUserNick();
-
         entity.companyToken = dto.getCompanyToken();
-
         entity.department = dEntity;
         entity.role = rEntity;
+
         return entity;
     }
 

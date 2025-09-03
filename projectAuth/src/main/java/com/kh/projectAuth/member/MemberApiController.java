@@ -6,10 +6,7 @@ import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +24,12 @@ public class MemberApiController {
          } else {
              return ResponseEntity.badRequest().body(0);
          }
+    }
+
+    @GetMapping("test")
+    public ResponseEntity<String> test() {
+
+        return ResponseEntity.ok().body("성공이에요");
     }
 
 

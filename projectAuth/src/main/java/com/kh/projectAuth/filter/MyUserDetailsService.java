@@ -18,6 +18,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -29,7 +30,6 @@ public class MyUserDetailsService implements UserDetailsService {
 
         //dto로 변환과정에 있어서 안에서 비밀번호 Bcrypt encoding이 진행되어있음
         MemberDto dto = MemberDto.from(find_entity);
-        MyUserDetails myUserDetails = new MyUserDetails(dto);
-        return myUserDetails;
+        return new MyUserDetails(dto);
     }
 }

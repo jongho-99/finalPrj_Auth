@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import jakarta.servlet.http.Cookie;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -68,8 +69,19 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         LocalDateTime userCreatedAt = userDetails.getUserCreatedAt();
 
-        String jwt = myJwtUtil.createJwt(userId, userNick, userRoleName, userDepartmentName, userCreatedAt);
-        response.addHeader("Authorization", "Bearer " + jwt);
+        String jwt = myJwtUtil.createJwt(userId, userNick, userRoleName);
+        
+        //js측에서 따로 Authorization 헤더 기반 인증을 유지하고 싶다면 남겨놔두 댐 + 그리고 Bearer 빠짐 JSON이 알아보려고 달았던거임
+//        response.addHeader("Authorization", "Bearer " + jwt);
+
+        // 쿠키로 JWT 전달 (HttpOnly + Secure 옵션 추가 가능)
+        
+        Cookie cookie = new Cookie("accessToken", jwt);
+        cookie.setHttpOnly(true);              // JS에서 접근 불가
+        cookie.setSecure(false);                // HTTPS에서만 전송 (개발 시 false로 가능)
+        cookie.setPath("/");                   // 전체 경로에서 접근 가능
+        cookie.setMaxAge(30 * 60);             // 15분 유지 (초 단위)
+        response.addCookie(cookie);
     }
 
     //로그인 실패

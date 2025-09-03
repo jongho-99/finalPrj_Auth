@@ -2,12 +2,14 @@ package com.kh.projectAuth.member;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 
 @Getter
+@RequiredArgsConstructor
 public class MemberDto {
 
     private Long no;
@@ -30,6 +32,7 @@ public class MemberDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
+
     public static MemberDto from(MemberEntity entity) {
         MemberDto dto = new MemberDto();
 
@@ -50,4 +53,10 @@ public class MemberDto {
     }
 
 
+    public void loginAuth(String userId, String userPwd, String userRole) {
+        this.userId = userId;
+        this.userNick = userPwd;
+        this.roleName = userRole;
+
+    }
 }
