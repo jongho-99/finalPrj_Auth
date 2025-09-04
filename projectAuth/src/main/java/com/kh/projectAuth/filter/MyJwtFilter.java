@@ -17,6 +17,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collection;
 
+
+//첫 요청에 대해서 한번만 사용되는 OncePerRequestFilter를 상속받은 MyJwtFilter를 사용
+// 신분증 검사를 위한 클래스임
 @RequiredArgsConstructor
 public class MyJwtFilter extends OncePerRequestFilter {
 
@@ -37,8 +40,14 @@ public class MyJwtFilter extends OncePerRequestFilter {
                     break;
                 }
             }
-
         }
+
+        if (accessToken == null) {
+            // JWT 자체가 없는 경우 → 그냥 다음 필터로 넘김
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         
         if(myJwtUtil.isExpired(accessToken)) {
             System.out.println("토큰 만료 ㅇㅇ");

@@ -56,7 +56,7 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     //로그인 성공 (성공했으니까 JWT를 생성해서 발급)
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
 
         System.out.println("MyLoginFilter.successfulAuthentication");
 
@@ -65,9 +65,11 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
         String userId = userDetails.getUsername();
         String userNick = userDetails.getUserNick();
         String userRoleName = userDetails.getUserRoleName();
-        String userDepartmentName = userDetails.getUserDepartmentName();
 
-        LocalDateTime userCreatedAt = userDetails.getUserCreatedAt();
+        // 만료 시간 계산 (15분 뒤)
+        long now = System.currentTimeMillis();
+        long expMillis = now + (1000 * 60 * 15);
+
 
         String jwt = myJwtUtil.createJwt(userId, userNick, userRoleName);
         
@@ -82,6 +84,19 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
         cookie.setPath("/");                   // 전체 경로에서 접근 가능
         cookie.setMaxAge(30 * 60);             // 15분 유지 (초 단위)
         response.addCookie(cookie);
+
+
+        // JSON 응답 내려주기
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        String jsonResponse = String.format(
+                "{ \"userId\": \"%s\", \"userNick\": \"%s\", \"role\": \"%s\", \"expiresAt\": %d }",
+                userId, userNick, userRoleName, expMillis
+        );
+
+        response.getWriter().write(jsonResponse);
+
     }
 
     //로그인 실패

@@ -1,5 +1,6 @@
 package com.kh.projectAuth.config;
 
+import com.kh.projectAuth.filter.MyJwtFilter;
 import com.kh.projectAuth.filter.MyLoginFilter;
 import com.kh.projectAuth.filter.MyUserDetailsService;
 import com.kh.projectAuth.security.MyJwtUtil;
@@ -61,7 +62,14 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/member/login", "/", "/api/member/join").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/dev/**").hasRole("DEV")
                         .anyRequest().authenticated());
+
+
+        //필터 추가하기 (로그인 필터 앞에다가 ㅇㅇ 신분증을 확인하는 필터임)
+        MyJwtFilter myJwtFilter = new MyJwtFilter(myJwtUtil);
+        http.addFilterBefore(myJwtFilter, MyLoginFilter.class);
+
 
         //필터 갈아끼우기
         AuthenticationManager authenticationManager = authenticationManager(authenticationConfiguration);
